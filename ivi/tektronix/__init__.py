@@ -25,6 +25,16 @@ THE SOFTWARE.
 """
 
 # Oscilloscopes
+# DPO2000
+from .tektronixDPO2024 import tektronixDPO2024
+from .tektronixDPO2014 import tektronixDPO2014
+from .tektronixDPO2012 import tektronixDPO2012
+# DPO2000B
+from .tektronixDPO2024B import tektronixDPO2024B
+from .tektronixDPO2012B import tektronixDPO2012B
+from .tektronixDPO2022B import tektronixDPO2022B
+from .tektronixDPO2004B import tektronixDPO2004B
+from .tektronixDPO2002B import tektronixDPO2002B
 # DPO4000
 from .tektronixDPO4032 import tektronixDPO4032
 from .tektronixDPO4034 import tektronixDPO4034
@@ -66,6 +76,18 @@ from .tektronixMDO3052 import tektronixMDO3052
 from .tektronixMDO3054 import tektronixMDO3054
 from .tektronixMDO3102 import tektronixMDO3102
 from .tektronixMDO3104 import tektronixMDO3104
+# MSO2000
+from .tektronixMSO2012 import tektronixMSO2012
+from .tektronixMSO2014 import tektronixMSO2014
+from .tektronixMSO2024 import tektronixMSO2024
+# MSO2000B
+from .tektronixMSO2002B import tektronixMSO2002B
+from .tektronixMSO2004B import tektronixMSO2004B
+from .tektronixMSO2012B import tektronixMSO2012B
+from .tektronixMSO2014B import tektronixMSO2014B
+from .tektronixMSO2022B import tektronixMSO2022B
+from .tektronixMSO2024B import tektronixMSO2024B
+
 
 # Function Generators
 from .tektronixAWG2005 import tektronixAWG2005

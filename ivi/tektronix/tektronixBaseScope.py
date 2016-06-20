@@ -224,13 +224,16 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
         self._identity_instrument_firmware_revision = ""
         self._identity_specification_major_version = 4
         self._identity_specification_minor_version = 1
-        self._identity_supported_instrument_models = ['DPO4032', 'DPO4034', 'DPO4054', 
-                'DPO4104', 'DPO4014B', 'DPO4034B', 'DPO4054B', 'DPO4102B', 'DPO4104B',
-                'MSO4032', 'MSO4034', 'MSO4054', 'MSO4104', 'MSO4014B', 'MSO4034B',
-                'MSO4054B', 'MSO4102B', 'MSO4104B', 'MDO4054', 'MDO4104', 'MDO4014B',
-                'MDO4034B', 'MDO4054B', 'MDO4104B', 'MDO3012', 'MDO3014', 'MDO3022',
-                'MDO3024', 'MDO3032', 'MDO3034', 'MDO3052', 'MDO3054', 'MDO3102',
-                'MDO3104']
+        self._identity_supported_instrument_models = ['DPO2002B', 'DPO2004B', 'DPO2012', 
+                'DPO2012B', 'DPO2014', 'DPO2014B', 'DPO2022B', 'DPO2024', 
+                'DPO2024B', 'DPO4032', 'DPO4034', 'DPO4054', 'DPO4104', 'DPO4014B',
+                'DPO4034B', 'DPO4054B', 'DPO4102B', 'DPO4104B', 'MSO4032', 'MSO4034', 
+                'MSO4054', 'MSO4104', 'MSO4014B', 'MSO4034B','MSO4054B', 'MSO4102B', 
+                'MSO4104B', 'MDO4054', 'MDO4104', 'MDO4014B', 'MDO4034B', 'MDO4054B',
+                'MDO4104B', 'MDO3012', 'MDO3014', 'MDO3022', 'MDO3024', 'MDO3032', 
+                'MDO3034', 'MDO3052', 'MDO3054', 'MDO3102', 'MDO3104', 'MSO2002B', 
+                'MSO2004B', 'MSO2012', 'MSO2012B', 'MSO2014''MSO2014B', 'MSO2022B', 
+                'MSO2024', 'MSO2024B']
 
         self._add_property('channels[].invert',
                         self._get_channel_invert,
