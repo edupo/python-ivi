@@ -1,5 +1,6 @@
-from .tektronixMSO2024 import tektronixMSO2024
-n Interchangeable Virtual Instrument Library
+"""
+
+Python Interchangeable Virtual Instrument Library
 
 Copyright (c) 2016 Alex Forencich
 

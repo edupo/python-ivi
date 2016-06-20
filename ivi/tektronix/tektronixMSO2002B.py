@@ -1,5 +1,6 @@
-1
-n Interchangeable Virtual Instrument Library
+"""
+
+Python Interchangeable Virtual Instrument Library
 
 Copyright (c) 2016 Alex Forencich
 
