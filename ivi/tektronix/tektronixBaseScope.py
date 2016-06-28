@@ -936,7 +936,7 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
     def _get_trigger_source(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
             t = self._ask(":trigger:a:type?").lower()
-            if t == 'edge':
+            if t == 'edge' or t == 'edg':
                 value = self._ask(":trigger:a:edge:source?").lower()
             elif t == 'logic':
                 # TODO
