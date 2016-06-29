@@ -26,6 +26,17 @@ THE SOFTWARE.
 
 from .tektronixDPO2000 import *
 
+AcquisitionTypeMapping = {
+            'normal': 'sam',
+            'average': 'ave',
+            }
+
+SlopeMapping = {
+            'positive': 'ris',
+            'negative': 'fall',
+            'either': 'either'
+            }
+
 class tektronixMSO2000(tektronixDPO2000):
     "Tektronix MSO2000 series IVI oscilloscope driver"
 
@@ -41,16 +52,6 @@ class tektronixMSO2000(tektronixDPO2000):
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         self._bandwidth = 1e9
 
-        self.AcquisitionTypeMapping = {
-            'normal': 'sam',
-            'average': 'ave',
-            }
-
-        self.SlopeMapping = {
-            'positive': 'ris',
-            'negative': 'fall',
-            'either': 'either'}
-            
         self._identity_description = "Tektronix MSO2000 series IVI oscilloscope driver"
         self._identity_supported_instrument_models = ['MSO2024', 'MSO2014', 'MSO2012',
                 'MSO2024B', 'MSO2022B', 'MSO2014B', 'MSO2012B', 'MSO2004B', 'MSO2002B'] 
