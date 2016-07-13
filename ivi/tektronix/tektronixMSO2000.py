@@ -56,6 +56,12 @@ class tektronixMSO2000(tektronixDPO2000):
         self._identity_supported_instrument_models = ['MSO2024', 'MSO2014', 'MSO2012',
                 'MSO2024B', 'MSO2022B', 'MSO2014B', 'MSO2012B', 'MSO2004B', 'MSO2002B'] 
         self._init_channels()
+        self._trigger_value_map = {
+            'rise': 'positive',
+            'ris': 'positive',
+            'fall': 'negative',
+            'either': 'either'
+        }
 
     def _get_acquisition_type(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
@@ -75,7 +81,7 @@ class tektronixMSO2000(tektronixDPO2000):
     def _get_trigger_edge_slope(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
             value = self._ask(":trigger:a:edge:slope?").lower()
-            self._trigger_edge_slope = [k for k,v in SlopeMapping.items() if v==value][0]
+            self._trigger_edge_slope = self._trigger_value_map[value]
             self._set_cache_valid()
         return self._trigger_edge_slope
 
