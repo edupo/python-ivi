@@ -26,16 +26,6 @@ THE SOFTWARE.
 
 from .tektronixDPO2000 import *
 
-AcquisitionTypeMapping = {
-            'normal': 'sam',
-            'average': 'ave',
-            }
-
-SlopeMapping = {
-            'positive': 'ris',
-            'negative': 'fall',
-            'either': 'either'
-            }
 
 class tektronixMSO2000(tektronixDPO2000):
     "Tektronix MSO2000 series IVI oscilloscope driver"
@@ -56,35 +46,56 @@ class tektronixMSO2000(tektronixDPO2000):
         self._identity_supported_instrument_models = ['MSO2024', 'MSO2014', 'MSO2012',
                 'MSO2024B', 'MSO2022B', 'MSO2014B', 'MSO2012B', 'MSO2004B', 'MSO2002B'] 
         self._init_channels()
+        self._trigger_set_map = {
+            'positive': 'ris',
+            'negative': 'fall',
+            'either': 'either'
+        }
+        self._trigger_get_map = {
+            'rise': 'positive',
+            'ris': 'positive',
+            'fall': 'negative',
+            'either': 'either'
+        }
+        self._acq_set_map = {
+            'normal': 'sam',
+            'average': 'ave',
+        }
+        self._acq_get_map = {
+            'sam': 'normal',
+            'sample': 'normal',
+            'ave': 'average',
+            'average': 'average',
+        }
 
     def _get_acquisition_type(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
             value = self._ask(":acquire:mode?").lower()
-            self._acquisition_type = [k for k,v in AcquisitionTypeMapping.items() if v==value][0]
+            self._acquisition_type = self._acq_get_map[value]
             self._set_cache_valid()
         return self._acquisition_type
 
     def _set_acquisition_type(self, value):
-        if value not in AcquisitionTypeMapping:
+        if value not in self._acq_set_map:
             raise ivi.ValueNotSupportedException()
         if not self._driver_operation_simulate:
-            self._write(":acquire:mode %s" % AcquisitionTypeMapping[value])
+            self._write(":acquire:mode %s" % self._acq_set_map[value])
         self._acquisition_type = value
         self._set_cache_valid()
 
     def _get_trigger_edge_slope(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
             value = self._ask(":trigger:a:edge:slope?").lower()
-            self._trigger_edge_slope = [k for k,v in SlopeMapping.items() if v==value][0]
+            self._trigger_edge_slope = self._trigger_get_map[value]
             self._set_cache_valid()
         return self._trigger_edge_slope
 
-    def _set_trigger_edge_slope(self, value):
-        if value not in SlopeMapping:
+    def _set_trigger_edge_slope(self, slope):
+        if slope not in self._trigger_set_map:
             raise ivi.ValueNotSupportedException()
         if not self._driver_operation_simulate:
-            self._write(":trigger:a:edge:slope %s" % SlopeMapping[value])
-        self._trigger_edge_slope = value
+            self._write(":trigger:a:edge:slope %s" % self._trigger_set_map[slope])
+        self._trigger_edge_slope = slope
         self._set_cache_valid()
 
     def _measurement_fetch_waveform(self, index):
