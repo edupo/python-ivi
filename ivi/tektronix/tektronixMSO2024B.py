@@ -39,5 +39,6 @@ class tektronixMSO2024B(tektronixMSO2000):
         self._digital_channel_count = 16
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         self._bandwidth = 200e6
+        self._vertical_divisions = 8
 
         self._init_channels()
