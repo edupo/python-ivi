@@ -233,7 +233,7 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
                 'MDO4104B', 'MDO3012', 'MDO3014', 'MDO3022', 'MDO3024', 'MDO3032', 
                 'MDO3034', 'MDO3052', 'MDO3054', 'MDO3102', 'MDO3104', 'MSO2002B', 
                 'MSO2004B', 'MSO2012', 'MSO2012B', 'MSO2014''MSO2014B', 'MSO2022B', 
-                'MSO2024', 'MSO2024B']
+                'MSO2024', 'MSO2024B', 'DPO7354C']
 
         self._add_property('channels[].invert',
                         self._get_channel_invert,
