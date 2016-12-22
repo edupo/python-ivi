@@ -32,7 +32,7 @@ class tektronixDPO7354C(tektronixDPO7000):
     def __init__(self, *args, **kwargs):
         self.__dict__.setdefault('_instrument_id', 'DPO7354C')
 
-        super(tektronixDPO4032, self).__init__(*args, **kwargs)
+        super(tektronixDPO7354C, self).__init__(*args, **kwargs)
 
         self._analog_channel_count = 4
         self._digital_channel_count = 0
