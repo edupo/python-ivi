@@ -66,7 +66,6 @@ class tektronixDPO5000(tektronixBaseScope):
                         self._get_acquisition_sample_rate,
                         self._set_acquisition_sample_rate,
                         None,
-                        None,
                         ivi.Doc("""
                         Returns the effective sample rate of the acquired waveform using the
                         current configuration. The units are samples per second.
