@@ -51,6 +51,12 @@ from .tektronixDPO4034B import tektronixDPO4034B
 from .tektronixDPO4054B import tektronixDPO4054B
 from .tektronixDPO4102B import tektronixDPO4102B
 from .tektronixDPO4104B import tektronixDPO4104B
+# DPO5000
+from .tektronixDPO5000 import tektronixDPO5000
+# MSO5000
+from .tektronixMSO5000 import tektronixMSO5000
+# MSO5204B
+from .tektronixMSO50204B import tektronixMSO5204B
 # DPO7000C
 from .tektronixDPO7354C import tektronixDPO7354C
 # MSO4000B
