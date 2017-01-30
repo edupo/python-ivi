@@ -45,7 +45,7 @@ class tektronixDPO5000(tektronixBaseScope):
 
         self._init_channels()
 
-                self._add_property('acquisition.horizontal_mode',
+        self._add_property('acquisition.horizontal_mode',
                         self._get_acquisition_horizontal_mode,
                         self._set_acquisition_horizontal_mode,
                         None,
