@@ -70,7 +70,7 @@ class tektronixDPO5000(tektronixBaseScope):
                         ivi.Doc("""
                         Returns the effective sample rate of the acquired waveform using the
                         current configuration. The units are samples per second.
-                        """, cls, grp, '4.2.10'))
+                        """))
 
         self._add_property('acquisition.horizontal_roll',
                         self._get_acquisition_horizontal_roll,
