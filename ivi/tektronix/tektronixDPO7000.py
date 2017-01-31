@@ -224,3 +224,26 @@ class tektronixDPO7000(tektronixBaseScope):
         trace.y_raw.byteswap()
 
         return trace
+
+    def _display_fetch_screenshot(self, format='png', invert=False):
+        if self._driver_operation_simulate:
+            return b''
+
+        if format not in self._display_screenshot_image_format_mapping:
+            raise ivi.ValueNotSupportedException()
+
+        format = self._display_screenshot_image_format_mapping[format]
+
+        self._write("HARDCopy:PORT FILE;")
+        self._write("EXPort:FORMat PNG")
+
+        self._write("HARDCopy:FILEName \"C:\\Temp.png\"")
+        self._write("HARDCopy STARt")
+
+        self._write("FILESystem:READFile \"C:\\Temp.png\"")
+
+        screenshot = self._read_raw()
+
+        self._write("FILESystem:DELEte \"C:\\Temp.png\"")
+
+        return screenshot
