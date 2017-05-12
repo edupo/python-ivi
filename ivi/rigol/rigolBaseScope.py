@@ -354,9 +354,9 @@ class rigolBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.common
 
         self._analog_channel_name = list()
         for i in range(self._analog_channel_count):
-            self._channel_name.append("channel%d" % (i+1))
+            self._channel_name.append("chan%d" % (i+1))
             self._channel_label.append("%d" % (i+1))
-            self._analog_channel_name.append("channel%d" % (i+1))
+            self._analog_channel_name.append("chan%d" % (i+1))
             self._channel_probe_skew.append(0)
             self._channel_invert.append(False)
             self._channel_scale.append(1.0)
@@ -366,9 +366,9 @@ class rigolBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.common
         self._digital_channel_name = list()
         if (self._digital_channel_count > 0):
             for i in range(self._digital_channel_count):
-                self._channel_name.append("digital%d" % i)
+                self._channel_name.append("d%d" % i)
                 self._channel_label.append("D%d" % i)
-                self._digital_channel_name.append("digital%d" % i)
+                self._digital_channel_name.append("d%d" % i)
 
             for i in range(self._analog_channel_count, self._channel_count):
                 self._channel_input_impedance[i] = 100000
