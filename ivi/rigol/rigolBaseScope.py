@@ -87,28 +87,28 @@ SlopeMapping = {
         'negative': 'neg',
         'either': 'rfal'}
 MeasurementFunctionMapping = {
-        'rise_time': 'risetime',
-        'fall_time': 'falltime',
+        'rise_time': 'rtime',
+        'fall_time': 'ftime',
         'frequency': 'frequency',
         'period': 'period',
-        'voltage_rms': 'vrms display',
+        'voltage_rms': 'vrms',  
         'voltage_peak_to_peak': 'vpp',
         'voltage_max': 'vmax',
         'voltage_min': 'vmin',
         'voltage_high': 'vtop',
         'voltage_low': 'vbase',
-        'voltage_average': 'vaverage display',
+        'voltage_average': 'vavg',   
         'width_negative': 'nwidth',
         'width_positive': 'pwidth',
-        'duty_cycle_positive': 'dutycycle',
-        'amplitude': 'vamplitude',
-        'voltage_cycle_rms': 'vrms cycle',
-        'voltage_cycle_average': 'vaverage cycle',
+        'duty_cycle_positive': 'pduty',  
+        'amplitude': 'vamp',  
+        'voltage_cycle_rms': 'pvrms',  
+        'voltage_cycle_average': 'vbase',  
         'overshoot': 'overshoot',
-        'preshoot': 'preshoot',
-        'ratio': 'vratio',
-        'phase': 'phase',
-        'delay': 'delay'}
+        'preshoot': 'preshoot'}
+        #'ratio': 'vratio',
+        #'phase': 'rphase',   
+        #'delay': 'rdelay'}  
 MeasurementFunctionMappingDigital = {
         'rise_time': 'risetime',
         'fall_time': 'falltime',
@@ -1181,7 +1181,7 @@ class rigolBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.common
             if len(l) > 1:
                 l[-1] = l[-1] + ','
             func = ' '.join(l)
-            query = ":measure:item? %s, %s" % (func, self._channel_name[index])
+            query = ":measure:%s? %s" % (func, self._channel_name[index])
             if measurement_function in ['phase', 'delay']:
                 ref_index = ivi.get_index(self._channel_name, ref_channel)
                 query += ", %s" % self._channel_name[ref_index]
