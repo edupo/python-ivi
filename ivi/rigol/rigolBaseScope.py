@@ -1181,7 +1181,7 @@ class rigolBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.common
             if len(l) > 1:
                 l[-1] = l[-1] + ','
             func = ' '.join(l)
-            query = ":measure:%s? %s" % (func, self._channel_name[index])
+            query = ":measure:%s %s" % (func, self._channel_name[index])
             if measurement_function in ['phase', 'delay']:
                 ref_index = ivi.get_index(self._channel_name, ref_channel)
                 query += ", %s" % self._channel_name[ref_index]
