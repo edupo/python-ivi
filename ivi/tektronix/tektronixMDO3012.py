@@ -37,6 +37,7 @@ class tektronixMDO3012(tektronixMDO3000):
         self._analog_channel_count = 2
         self._digital_channel_count = 16
         self._bandwidth = 100e6
+        self._vertical_divisions = 8
 
         # AFG option
         self._output_count = 1
