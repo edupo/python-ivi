@@ -281,6 +281,13 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
                         Specifies the vertical scale, or units per division, of the channel.  Units
                         are volts.
                         """))
+        self._add_property('channels[].position',
+                        self._get_channel_position,
+                        self._set_channel_position,
+                        None,
+                        ivi.Doc("""
+                        Specifies the vertical position of the channel.  Units are volts.
+                        """))
         self._add_property('channels[].trigger_level',
                         self._get_channel_trigger_level,
                         self._set_channel_trigger_level,
@@ -424,6 +431,7 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
         self._channel_scale = list()
         self._channel_trigger_level = list()
         self._channel_bw_limit = list()
+        self._channel_position = list()
 
         self._analog_channel_name = list()
         for i in range(self._analog_channel_count):
@@ -436,6 +444,7 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
             self._channel_invert.append(False)
             self._channel_probe_id.append("NONE")
             self._channel_bw_limit.append(False)
+            self._channel_position.append(0)
 
         # digital channels
         self._digital_channel_name = list()
@@ -452,6 +461,7 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
                 self._channel_coupling[i] = 'dc'
                 self._channel_offset[i] = 0
                 self._channel_range[i] = 1
+                #self._channel_position[i] = 0
 
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         self.channels._set_list(self._channel_name)
@@ -817,18 +827,29 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
 
     def _get_channel_offset(self, index):
         index = ivi.get_index(self._channel_name, index)
-        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            self._channel_offset[index] = -float(self._ask(":%s:position?" % self._channel_name[index])) * self._get_channel_scale(index)
-            self._set_cache_valid(index=index)
+        if not self._driver_operation_simulate:
+            self._channel_offset[index] = float(self._ask(":%s:offset?" % self._channel_name[index]))
         return self._channel_offset[index]
 
     def _set_channel_offset(self, index, value):
         index = ivi.get_index(self._channel_name, index)
         value = float(value)
         if not self._driver_operation_simulate:
-            self._write(":%s:position %e" % (self._channel_name[index], -value / self._get_channel_scale(index)))
+            self._write(":%s:offset %e" % (self._channel_name[index], value))
         self._channel_offset[index] = value
-        self._set_cache_valid(index=index)
+
+    def _get_channel_position(self, index):
+        index = ivi.get_index(self._channel_name, index)
+        if not self._driver_operation_simulate:
+            self._channel_position[index] = float(self._ask(":%s:position?" % self._channel_name[index]))
+        return self._channel_position[index]
+
+    def _set_channel_position(self, index, value):
+        index = ivi.get_index(self._channel_name, index)
+        value = float(value)
+        if not self._driver_operation_simulate:
+            self._write(":%s:position %e" % (self._channel_name[index], value))
+        self._channel_position[index] = value
 
     def _get_channel_range(self, index):
         return self._get_channel_scale(index) * self._vertical_divisions
@@ -1043,7 +1064,6 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
                 self._write(":trigger:a:edge:source line")
             elif value in ['runt', 'width', 'glitch', 'transition', 'timeout']:
                 self._write(":trigger:a:pulse:class %s" % value)
-                print(value)
                 if value == 'glitch':
                     t = self._ask(":trigger:a:pulsewidth:when?").lower()
                     if t not in GlitchConditionMapping.values():
@@ -1282,10 +1302,12 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
         self._write(":data:start 1")
         self._write(":data:stop 1e10")
 
+
         trace = ivi.TraceYT()
 
         # Read preamble
         pre = self._ask(":wfmoutpre?").split(';')
+
 
         acq_format = pre[7].strip().upper()
         points = int(pre[6])
