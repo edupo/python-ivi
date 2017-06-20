@@ -547,9 +547,8 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
         self._set_cache_valid()
 
     def _get_timebase_position(self):
-        if not self._driver_operation_simulate and not self._get_cache_valid():
+        if not self._driver_operation_simulate:
             self._timebase_position = float(self._ask(":horizontal:delay:time?"))
-            self._set_cache_valid()
         return self._timebase_position
 
     def _set_timebase_position(self, value):
@@ -558,7 +557,6 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
             self._write(":horizontal:delay:mode 1")
             self._write(":horizontal:delay:time %e" % value)
         self._timebase_position = value
-        self._set_cache_valid()
         self._set_cache_valid(False, 'acquisition_start_time')
         self._set_cache_valid(False, 'timebase_window_position')
 
