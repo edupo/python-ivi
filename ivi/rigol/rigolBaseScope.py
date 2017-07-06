@@ -91,25 +91,25 @@ MeasurementFunctionMapping = {
         'fall_time': 'ftime',
         'frequency': 'frequency',
         'period': 'period',
-        'voltage_rms': 'vrms',  
+        'voltage_rms': 'vrms',
         'voltage_peak_to_peak': 'vpp',
         'voltage_max': 'vmax',
         'voltage_min': 'vmin',
         'voltage_high': 'vtop',
         'voltage_low': 'vbase',
-        'voltage_average': 'vavg',   
+        'voltage_average': 'vavg',
         'width_negative': 'nwidth',
         'width_positive': 'pwidth',
-        'duty_cycle_positive': 'pduty', 
-        'duty_cycle_negative': 'nduty', 
-        'amplitude': 'vamp',  
-        'voltage_cycle_rms': 'pvrms',  
-        'voltage_cycle_average': 'vbase',  
+        'duty_cycle_positive': 'pduty',
+        'duty_cycle_negative': 'nduty',
+        'amplitude': 'vamp',
+        'voltage_cycle_rms': 'pvrms',
+        'voltage_cycle_average': 'vbase',
         'overshoot': 'overshoot',
         'preshoot': 'preshoot'}
         #'ratio': 'vratio',
-        #'phase': 'rphase',   
-        #'delay': 'rdelay'}  
+        #'phase': 'rphase',
+        #'delay': 'rdelay'}
 MeasurementFunctionMappingDigital = {
         'rise_time': 'risetime',
         'fall_time': 'falltime',
@@ -561,15 +561,21 @@ class rigolBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.common
         self._set_cache_valid()
 
     def _get_acquisition_number_of_points_minimum(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._acquisition_number_of_points_minimum = int(self._ask(":acquire:mdepth?"))
+            self._set_cache_valid()
         return self._acquisition_number_of_points_minimum
 
     def _set_acquisition_number_of_points_minimum(self, value):
         value = int(value)
+        if not self._driver_operation_simulate:
+            self._write(":acquire:mdepth %d" % value)
         self._acquisition_number_of_points_minimum = value
+        self._set_cache_valid()
 
     def _get_acquisition_record_length(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
-            self._acquisition_record_length = int(self._ask(":waveform:points?"))
+            self._acquisition_record_length = int(self._ask(":acquire:mdepth?"))
             self._set_cache_valid()
         return self._acquisition_record_length
 
