@@ -100,7 +100,8 @@ MeasurementFunctionMapping = {
         'voltage_average': 'vavg',   
         'width_negative': 'nwidth',
         'width_positive': 'pwidth',
-        'duty_cycle_positive': 'pduty',  
+        'duty_cycle_positive': 'pduty', 
+        'duty_cycle_negative': 'nduty', 
         'amplitude': 'vamp',  
         'voltage_cycle_rms': 'pvrms',  
         'voltage_cycle_average': 'vbase',  
@@ -705,7 +706,7 @@ class rigolBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.common
     def _get_channel_coupling(self, index):
         index = ivi.get_index(self._analog_channel_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
-            self._channel_enabled[index] = self._ask(":%s:coupling?" % self._channel_name[index]).lower()
+            self._channel_coupling[index] = self._ask(":%s:coupling?" % self._channel_name[index]).lower()
             self._set_cache_valid(index=index)
         return self._channel_coupling[index]
 
