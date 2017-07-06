@@ -561,9 +561,8 @@ class rigolBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.common
         self._set_cache_valid()
 
     def _get_acquisition_number_of_points_minimum(self):
-        if not self._driver_operation_simulate and not self._get_cache_valid():
+        if not self._driver_operation_simulate:
             self._acquisition_number_of_points_minimum = int(self._ask(":acquire:mdepth?"))
-            self._set_cache_valid()
         return self._acquisition_number_of_points_minimum
 
     def _set_acquisition_number_of_points_minimum(self, value):
@@ -571,12 +570,10 @@ class rigolBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.common
         if not self._driver_operation_simulate:
             self._write(":acquire:mdepth %d" % value)
         self._acquisition_number_of_points_minimum = value
-        self._set_cache_valid()
 
     def _get_acquisition_record_length(self):
-        if not self._driver_operation_simulate and not self._get_cache_valid():
+        if not self._driver_operation_simulate:
             self._acquisition_record_length = int(self._ask(":acquire:mdepth?"))
-            self._set_cache_valid()
         return self._acquisition_record_length
 
     def _get_acquisition_time_per_record(self):
