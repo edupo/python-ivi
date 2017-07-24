@@ -38,6 +38,8 @@ class tektronixDPO2000(tektronixBaseScope):
         self._digital_channel_count = 0
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         self._bandwidth = 200e6
+        self._horizontal_divisions = 10
+        self._vertical_divisions = 8
 
         self._identity_description = "Tektronix DPO2000 series IVI oscilloscope driver"
         self._identity_supported_instrument_models = ['DPO2024', 'DPO2014', 'DPO2012',
