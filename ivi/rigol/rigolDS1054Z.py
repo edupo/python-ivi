@@ -27,12 +27,12 @@ THE SOFTWARE.
 from .rigolDS1000Z import *
 
 class rigolDS1054Z(rigolDS1000Z):
-    "Rigol DS1074Z IVI oscilloscope driver"
+    "Rigol DS1054Z IVI oscilloscope driver"
 
     def __init__(self, *args, **kwargs):
         self.__dict__.setdefault('_instrument_id', 'DS1054Z')
 
-        super(rigolDS1074Z, self).__init__(*args, **kwargs)
+        super(rigolDS1054Z, self).__init__(*args, **kwargs)
 
         self._analog_channel_count = 4
         self._digital_channel_count = 0
