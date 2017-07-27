@@ -26,6 +26,7 @@ THE SOFTWARE.
 
 # Oscilloscopes
 # DS1000Z
+from .rigolDS1054Z import rigolDS1054Z
 from .rigolDS1074Z import rigolDS1074Z
 from .rigolDS1104Z import rigolDS1104Z
 from .rigolMSO1074Z import rigolMSO1074Z

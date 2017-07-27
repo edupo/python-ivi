@@ -190,7 +190,7 @@ class rigolBaseScope(scpi.common.IdnCommand, scpi.common.ErrorQuery, scpi.common
         self._identity_instrument_firmware_revision = ""
         self._identity_specification_major_version = 4
         self._identity_specification_minor_version = 1
-        self._identity_supported_instrument_models = ['DS1074Z', 'DS1104Z', 'MSO1074Z',
+        self._identity_supported_instrument_models = ['DS1054Z', 'DS1074Z', 'DS1104Z', 'MSO1074Z',
                 'MSO1104Z', 'DS2074A', 'DS2104A', 'DS2204A', 'DS2304A', 'MSO2074A',
                 'MSO2104A', 'MSO2204A', 'MSO2304A']
 
