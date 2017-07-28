@@ -38,6 +38,8 @@ class rigolDS1054Z(rigolDS1000Z):
         self._digital_channel_count = 0
         self._channel_count = self._analog_channel_count + self._digital_channel_count
         self._bandwidth = 50e6
+        self._horizontal_divisions = 12
+        self._vertical_divisions = 10
 
         self._init_channels()
 
