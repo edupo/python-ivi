@@ -35,6 +35,9 @@ from .tektronixDPO2014B import tektronixDPO2014B
 from .tektronixDPO2012B import tektronixDPO2012B
 from .tektronixDPO2004B import tektronixDPO2004B
 from .tektronixDPO2002B import tektronixDPO2002B
+# DPO3000
+from .tektronixDPO3014 import tektronixDPO3014
+from .tektronixDPO3034 import tektronixDPO3034
 # DPO4000
 from .tektronixDPO4032 import tektronixDPO4032
 from .tektronixDPO4034 import tektronixDPO4034

@@ -226,19 +226,19 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
         self._identity_specification_minor_version = 1
         self._identity_supported_instrument_models = ['DPO2002B', 'DPO2004B', 'DPO2012',
                     'DPO2012B', 'DPO2014', 'DPO2014B', 'DPO2022B', 'DPO2024',
-                    'DPO2024B', 'DPO4032', 'DPO4034', 'DPO4054', 'DPO4104', 'DPO4014B',
-                    'DPO4034B', 'DPO4054B', 'DPO4102B', 'DPO4104B', 'MSO4032', 'MSO4034', 
-                    'MSO4054', 'MSO4104', 'MSO4014B', 'MSO4034B','MSO4054B', 'MSO4102B',
-                    'MSO4104B', 'MDO4054', 'MDO4104', 'MDO4014B', 'MDO4034B', 'MDO4054B', 
-                    'MDO4104B', 'MDO3012', 'MDO3014', 'MDO3022', 'MDO3024', 'MDO3032', 
-                    'MDO3034', 'MDO3052', 'MDO3054', 'MDO3102', 'MDO3104', 'MSO2002B',        
-                    'MSO2004B', 'MSO2012', 'MSO2012B', 'MSO2014''MSO2014B', 'MSO2022B',       
+                    'DPO2024B', 'DPO3014', 'DPO3034','DPO4032', 'DPO4034', 'DPO4054',
+                    'DPO4104', 'DPO4014B','DPO4034B', 'DPO4054B', 'DPO4102B', 'DPO4104B', 'MSO4032',
+                    'MSO4034', 'MSO4054', 'MSO4104', 'MSO4014B', 'MSO4034B','MSO4054B', 'MSO4102B',
+                    'MSO4104B', 'MDO4054', 'MDO4104', 'MDO4014B', 'MDO4034B', 'MDO4054B',
+                    'MDO4104B', 'MDO3012', 'MDO3014', 'MDO3022', 'MDO3024', 'MDO3032',
+                    'MDO3034', 'MDO3052', 'MDO3054', 'MDO3102', 'MDO3104', 'MSO2002B',
+                    'MSO2004B', 'MSO2012', 'MSO2012B', 'MSO2014''MSO2014B', 'MSO2022B',
                     'MSO2024', 'MSO2024B', 'MSO71254C', 'MSO71604C', 'MSO72004C', 'DPO71254C',
-                    'DPO71604C', 'DPO72004C', 'MSO5034', 'MSO5054', 'MSO5104', 'MSO5204', 
-                    'DPO5054', 'DPO5104', 'DPO5204', 'DPO70804C', 'MSO70804C', 'DPO7254C', 
+                    'DPO71604C', 'DPO72004C', 'MSO5034', 'MSO5054', 'MSO5104', 'MSO5204',
+                    'DPO5054', 'DPO5104', 'DPO5204', 'DPO70804C', 'MSO70804C', 'DPO7254C',
                     'DPO7354C', 'DPO70404C', 'DPO70604C', 'MSO70404C', 'MSO70604C', 'DPO7054C',
-                    'DPO7104C', 'MSO72304DX', 'MSO72504DX', 'MSO73304DX', 'DPO72304DX', 
-                    'DPO72504DX', 'DPO73304DX', 'DPO5034B', 'DPO5054B', 'DPO5104B', 'DPO5204B', 
+                    'DPO7104C', 'MSO72304DX', 'MSO72504DX', 'MSO73304DX', 'DPO72304DX',
+                    'DPO72504DX', 'DPO73304DX', 'DPO5034B', 'DPO5054B', 'DPO5104B', 'DPO5204B',
                     'MSO5034B', 'MSO5054B', 'MSO5104B', 'MSO5204B']
 
         self._add_property('channels[].invert',
@@ -871,7 +871,7 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
         self._channel_scale[index] = value
         self._set_cache_valid(index=index)
         self._set_cache_valid(False, "channel_offset", index)
-    
+
     def _get_channel_trigger_level(self, index):
         index = ivi.get_index(self._channel_name, index)
         if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
@@ -1478,7 +1478,7 @@ class tektronixBaseScope(scpi.common.IdnCommand, scpi.common.Reset, scpi.common.
             self._write(":acquire:numavg %d" % value)
         self._acquisition_number_of_averages = value
         self._set_cache_valid()
-    
+
     def _get_trigger_modifier(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
             value = self._ask(":trigger:a:mode?").lower()
