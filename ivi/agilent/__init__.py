@@ -121,6 +121,9 @@ from .agilentMSO7034B import agilentMSO7034B
 from .agilentMSO7052B import agilentMSO7052B
 from .agilentMSO7054B import agilentMSO7054B
 from .agilentMSO7104B import agilentMSO7104B
+# Infiniium 9000A
+from .agilentMSO9104A import agilentMSO9104A
+from .agilentMSO9064A import agilentMSO9064A
 # Infiniium 90000A
 from .agilentDSO90254A import agilentDSO90254A
 from .agilentDSO90404A import agilentDSO90404A
