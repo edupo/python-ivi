@@ -48,6 +48,11 @@ ScreenshotImageFormatMapping = {
         'jpeg': 'jpg',
         'gif': 'gif'}
 SampleMode = set(['real_time', 'equivalent_time', 'segmented'])
+TimebaseReferenceMapping = {
+        'left': 'left',
+        'center': 'cent',
+        'right': 'righ',
+        'percent': 'perc'}
 
 class agilentBaseInfiniium(agilentBaseScope):
     "Agilent Infiniium series IVI oscilloscope driver"
@@ -193,10 +198,34 @@ class agilentBaseInfiniium(agilentBaseScope):
         lst = self._ask(":display:cgrade:levels?").split(',')
         return [int(x) for x in lst]
 
+    def _get_channel_coupling(self, index):
+        index = ivi.get_index(self._analog_channel_name, index)
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            self._channel_coupling[index] = self._ask(":%s:input?" % self._channel_name[index]).lower()
+            self._set_cache_valid(index=index)
+        return self._channel_coupling[index]
+
+    def _set_channel_coupling(self, index, value):
+        index = ivi.get_index(self._analog_channel_name, index)
+        if value not in VerticalCoupling:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write(":%s:input %s" % (self._channel_name[index], value))
+        self._channel_coupling[index] = value
+        self._set_cache_valid(index=index)
+
     def _get_channel_input_impedance(self, index):
         index = ivi.get_index(self._analog_channel_name, index)
-        # fixed
-        self._channel_input_impedance[index] = 50
+        if not self._driver_operation_simulate and not self._get_cache_valid(index=index):
+            val = self._ask(":%s:input?" % self._channel_name[index]).lower()
+            if val == 'dc':
+                val == '1M'
+            elif val == 'DC50':
+                val == '50'
+            elif val == 'AC':
+                val == '1M'
+            self._channel_coupling[index] = val
+            self._set_cache_valid(index=index)
         return self._channel_input_impedance[index]
 
     def _set_channel_input_impedance(self, index, value):
@@ -206,6 +235,87 @@ class agilentBaseInfiniium(agilentBaseScope):
             raise Exception('Invalid impedance selection')
         self._channel_input_impedance[index] = value
         self._set_cache_valid(index=index)
+
+    def _get_timebase_reference(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask(":timebase:reference?").lower()
+            self._timebase_reference = [k for k,v in TimebaseReferenceMapping.items() if v==value][0]
+            if self._timebase_reference == 'percent':
+                self._timebase_reference = float(self._ask(":timebase:reference:percent?"))
+            self._set_cache_valid()
+        return self._timebase_reference
+
+    def _get_trigger_coupling(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._trigger_coupling = self._ask(":trigger:edge:coupling?")
+        return self._trigger_coupling
+
+    def _set_trigger_coupling(self, value):
+        if value not in TriggerCouplingMapping:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            cpl, noise, hf = TriggerCouplingMapping[value]
+            self._write(":trigger:coupling %s" % cpl)
+            self._write(":trigger:nreject %d" % noise)
+            self._write(":trigger:hfreject %d" % hf)
+        self._trigger_coupling = value
+        self._set_cache_valid()
+
+    def _get_trigger_source(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask(":trigger:edge:source?").lower()
+            # TODO process value
+            self._trigger_source = value
+            self._set_cache_valid()
+        return self._trigger_source
+
+    def _set_trigger_source(self, value):
+        if hasattr(value, 'name'):
+            value = value.name
+        value = str(value)
+        if value not in self._channel_name:
+            raise ivi.UnknownPhysicalNameException()
+        if not self._driver_operation_simulate:
+            self._write(":trigger:edge:source %s" % value)
+        self._trigger_source = value
+        self._set_cache_valid()
+
+    def _get_trigger_type(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask(":trigger:mode?").lower()
+            self._trigger_type = value
+            self._set_cache_valid()
+        return self._trigger_type
+
+    def _set_trigger_type(self, value):
+        if value not in TriggerTypeMapping:
+            raise ivi.ValueNotSupportedException()
+        if not self._driver_operation_simulate:
+            self._write(":trigger:mode %s" % TriggerTypeMapping[value])
+            if value == 'ac_line':
+                self._write(":trigger:source line")
+            if value == 'glitch':
+                qual = self._ask(":trigger:glitch:qualifier?").lower()
+                if qual not in GlitchConditionMapping.values():
+                    self._write(":trigger:glitch:qualifier %s" % GlitchConditionMapping[self._trigger_glitch_condition])
+            if value == 'width':
+                self._write(":trigger:glitch:qualifier range")
+        self._trigger_type = value
+        self._set_cache_valid()
+
+    def _get_acquisition_number_of_averages(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._acquisition_number_of_averages = int(self._ask(":acquire:average:count?"))
+            self._set_cache_valid()
+        return self._acquisition_number_of_averages
+
+    def _set_acquisition_number_of_averages(self, value):
+        if value < 1 or value > 65536:
+            raise ivi.OutOfRangeException()
+        if not self._driver_operation_simulate:
+            self._write(":acquire:average:count %d" % value)
+        self._acquisition_number_of_averages = value
+        self._set_cache_valid()
 
     def _measurement_fetch_waveform(self, index):
         index = ivi.get_index(self._channel_name, index)
