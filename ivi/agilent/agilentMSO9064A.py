@@ -45,10 +45,7 @@ class agilentMSO9064A(agilent9000):
 
 
     def _measurement_fetch_waveform_digital(self, index):
-        # tbdecided how to specify # of channels for the server and JSON
         raw_data = []
-        #index =  TODO
-
 
         if self._driver_operation_simulate:
             return list()
