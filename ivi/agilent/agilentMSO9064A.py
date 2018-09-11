@@ -30,7 +30,8 @@ class agilentMSO9064A(agilent9000):
     "Agilent Infiniium MSO9064A IVI oscilloscope driver"
 
     def __init__(self, *args, **kwargs):
-        self.__dict__.setdefault('_instrument_id', 'MSO9064A')
+        cls = 'IviScope'
+        grp = 'Base'
 
         super(agilentMSO9064A, self).__init__(*args, **kwargs)
 
@@ -40,5 +41,41 @@ class agilentMSO9064A(agilent9000):
         self._bandwidth = 6e8
 
         self._init_channels()
+        self._add_method('measurement.fetch_waveform_digital', self._measurement_fetch_waveform_digital, ivi.Doc("""description goes here""", cls, grp, '4.3.13'))
+
+
+    def _measurement_fetch_waveform_digital(self, index):
+        # tbdecided how to specify # of channels for the server and JSON
+        raw_data = []
+        #index =  TODO
+
+
+        if self._driver_operation_simulate:
+            return list()
+
+        self._write(":waveform:byteorder msbfirst")
+        self._write(":waveform:format ascii")
+        self._write(":waveform:source %s" % index)
+
+        # Read preamble
+        pre = self._ask(":waveform:preamble?").split(',')
+
+        xinc = float(pre[4])
+        xorg = float(pre[5])
+        xref = int(float(pre[6]))
+
+#        if format != 0:
+#            raise UnexpectedResponseException()
+
+        # Read waveform data
+        raw_data.append(self._ask(':WAVeform:DATA?'))
+
+        # convert string of hex values to list of hex strings
+        data_list = raw_data[0].split(",")
+
+        # convert to times
+        data = [((((k-xref)*xinc) + xorg), e) for k,e in enumerate(data_list)]
+
+        return data
 
 
