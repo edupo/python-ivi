@@ -30,7 +30,8 @@ class agilentMSO9064A(agilent9000):
     "Agilent Infiniium MSO9064A IVI oscilloscope driver"
 
     def __init__(self, *args, **kwargs):
-        self.__dict__.setdefault('_instrument_id', 'MSO9064A')
+        cls = 'IviScope'
+        grp = 'Base'
 
         super(agilentMSO9064A, self).__init__(*args, **kwargs)
 
@@ -40,5 +41,56 @@ class agilentMSO9064A(agilent9000):
         self._bandwidth = 6e8
 
         self._init_channels()
+        self._add_method('measurement.fetch_waveform_digital', self._measurement_fetch_waveform_digital, ivi.Doc("""description goes here""", cls, grp, '4.3.13'))
+        self._add_property('acquisition.analog.sample_rate',
+                        self._get_acquisition_analog_sample_rate,
+                        self._set_acquisition_analog_sample_rate,
+                        None,
+                        None,
+                        ivi.Doc("""
+                        Returns or sets the effective sample rate of the acquired analog waveform using the
+                        current configuration. The units are samples per second.
+                        """, cls, grp, '4.2.10'))
+
+    def _get_acquisition_analog_sample_rate(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._acquisition__analog_sample_rate = int(self._ask(":acquire:srate:analog?"))
+            self._set_cache_valid()
+        return self._acquisition__analog_sample_rate
+
+    def _set_acquisition_analog_sample_rate(self, value):
+        value = float(value)
+        self._acquisition_analog_sample_rate = value
+
+    def _measurement_fetch_waveform_digital(self, index):
+        raw_data = []
+
+        if self._driver_operation_simulate:
+            return list()
+
+        self._write(":waveform:byteorder msbfirst")
+        self._write(":waveform:format ascii")
+        self._write(":waveform:source %s" % index)
+
+        # Read preamble
+        pre = self._ask(":waveform:preamble?").split(',')
+
+        xinc = float(pre[4])
+        xorg = float(pre[5])
+        xref = int(float(pre[6]))
+
+#        if format != 0:
+#            raise UnexpectedResponseException()
+
+        # Read waveform data
+        raw_data.append(self._ask(':WAVeform:DATA?'))
+
+        # convert string of hex values to list of hex strings
+        data_list = raw_data[0].split(",")
+
+        # convert to times
+        data = [((((k-xref)*xinc) + xorg), e) for k,e in enumerate(data_list)]
+
+        return data
 
 
