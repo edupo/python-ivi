@@ -254,10 +254,7 @@ class agilentBaseInfiniium(agilentBaseScope):
         if value not in TriggerCouplingMapping:
             raise ivi.ValueNotSupportedException()
         if not self._driver_operation_simulate:
-            cpl, noise, hf = TriggerCouplingMapping[value]
-            self._write(":trigger:coupling %s" % cpl)
-            self._write(":trigger:nreject %d" % noise)
-            self._write(":trigger:hfreject %d" % hf)
+            self._write(":trigger:edge:coupling %s" % value)
         self._trigger_coupling = value
         self._set_cache_valid()
 
