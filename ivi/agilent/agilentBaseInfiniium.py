@@ -273,8 +273,8 @@ class agilentBaseInfiniium(agilentBaseScope):
         if hasattr(value, 'name'):
             value = value.name
         value = str(value)
-        if value not in self._channel_name:
-            raise ivi.UnknownPhysicalNameException()
+        # if value not in self._channel_name:
+        #     raise ivi.UnknownPhysicalNameException()
         if not self._driver_operation_simulate:
             self._write(":trigger:edge:source %s" % value)
         self._trigger_source = value
@@ -422,3 +422,13 @@ class agilentBaseInfiniium(agilentBaseScope):
             raise ivi.ValueNotSupportedException()
         self._set_acquisition_mode('mode', value)
 
+    def _get_acquisition_number_of_points_minimum(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._acquisition_number_of_points_minimum = int(self._ask(":ACQuire:POINts:ANALog?"))
+        return self._acquisition_number_of_points_minimum
+    
+    def _set_acquisition_number_of_points_minimum(self, value):
+        if not self._driver_operation_simulate:
+            self._write(":ACQuire:POINts:ANALog %s" % value)
+        self._acquisition_number_of_points_minimum = value
+        self._set_cache_valid()
