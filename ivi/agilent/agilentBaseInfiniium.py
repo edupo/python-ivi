@@ -300,6 +300,19 @@ class agilentBaseInfiniium(agilentBaseScope):
         self._trigger_type = value
         self._set_cache_valid()
 
+    def _get_averaging_enabled(self):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            value = self._ask(":acquire:average?")
+            self._averaging_enabled = value
+            self._set_cache_valid()
+        return self._averaging_enabled
+
+    def _set_averaging_enabled(self, value):
+        if not self._driver_operation_simulate and not self._get_cache_valid():
+            self._write(":acquire:average %s" % value)
+            self._averaging_enabled = value
+            self._set_cache_valid()
+
     def _get_acquisition_number_of_averages(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
             self._acquisition_number_of_averages = int(self._ask(":acquire:average:count?"))
@@ -423,7 +436,7 @@ class agilentBaseInfiniium(agilentBaseScope):
         if not self._driver_operation_simulate and not self._get_cache_valid():
             self._acquisition_number_of_points_minimum = int(self._ask(":ACQuire:POINts:ANALog?"))
         return self._acquisition_number_of_points_minimum
-    
+
     def _set_acquisition_number_of_points_minimum(self, value):
         if not self._driver_operation_simulate:
             self._write(":ACQuire:POINts:ANALog %s" % value)
