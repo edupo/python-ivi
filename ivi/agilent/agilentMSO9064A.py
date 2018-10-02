@@ -42,10 +42,9 @@ class agilentMSO9064A(agilent9000):
 
         self._init_channels()
         self._add_method('measurement.fetch_waveform_digital', self._measurement_fetch_waveform_digital, ivi.Doc("""description goes here""", cls, grp, '4.3.13'))
-        self._add_property('acquisition.analog.sample_rate',
+        self._add_property('acquisition.analog_sample_rate',
                         self._get_acquisition_analog_sample_rate,
                         self._set_acquisition_analog_sample_rate,
-                        None,
                         None,
                         ivi.Doc("""
                         Returns or sets the effective sample rate of the acquired analog waveform using the
@@ -54,7 +53,7 @@ class agilentMSO9064A(agilent9000):
 
     def _get_acquisition_analog_sample_rate(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
-            self._acquisition__analog_sample_rate = int(self._ask(":acquire:srate:analog?"))
+            self._acquisition__analog_sample_rate = self._ask(":acquire:srate:analog?")
             self._set_cache_valid()
         return self._acquisition__analog_sample_rate
 

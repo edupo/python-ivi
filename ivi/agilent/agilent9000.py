@@ -326,8 +326,8 @@ class agilent9000(agilentBaseInfiniium):
         yorigin = float(pre[8])
         yreference = int(float(pre[9]))
 
-        if type == 1:
-            raise scope.InvalidAcquisitionTypeException()
+        # if type == 1:
+        #     raise scope.InvalidAcquisitionTypeException()
 
         if format != 2:
             raise UnexpectedResponseException()

@@ -129,7 +129,15 @@ class agilentBaseInfiniium(agilentBaseScope):
                         * Green minimum value
                         * Green maximum value
                         """))
-
+        self._add_property('acquisition.averaging_enabled',
+                        self._get_acquisition_averaging_enabled,
+                        self._set_acquisition_averaging_enabled,
+                        None,
+                        ivi.Doc("""
+                        The acquisition averaging control allows Infiniium to acquire 
+                        waveform data from several acquisitions and then average them all together. 
+                        When enabled, the channel data is averaged before being displayed.
+                        """))
         self._init_channels()
 
 
@@ -300,18 +308,16 @@ class agilentBaseInfiniium(agilentBaseScope):
         self._trigger_type = value
         self._set_cache_valid()
 
-    def _get_averaging_enabled(self):
-        if not self._driver_operation_simulate and not self._get_cache_valid():
+    def _get_acquisition_averaging_enabled(self):
+        if not self._driver_operation_simulate:
             value = self._ask(":acquire:average?")
-            self._averaging_enabled = value
-            self._set_cache_valid()
-        return self._averaging_enabled
+            self._acquisition_averaging_enabled = value
+        return self._acquisition_averaging_enabled
 
-    def _set_averaging_enabled(self, value):
-        if not self._driver_operation_simulate and not self._get_cache_valid():
+    def _set_acquisition_averaging_enabled(self, value):
+        if not self._driver_operation_simulate:
             self._write(":acquire:average %s" % value)
-            self._averaging_enabled = value
-            self._set_cache_valid()
+            self._acquisition_averaging_enabled = value
 
     def _get_acquisition_number_of_averages(self):
         if not self._driver_operation_simulate and not self._get_cache_valid():
