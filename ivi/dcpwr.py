@@ -25,13 +25,14 @@ THE SOFTWARE.
 """
 
 from . import ivi
+import abc
 
 # Parameter Values
-CurrentLimitBehavior = set(['regulate', 'trip'])
-RangeType = set(['current', 'voltage'])
-OutputState = set(['constant_voltage', 'constant_current', 'over_voltage',
-                'over_current', 'unregulated'])
-MeasurementType = set(['current', 'voltage'])
+CurrentLimitBehavior = {'regulate', 'trip'}
+RangeType = {'current', 'voltage'}
+OutputState = {'constant_voltage', 'constant_current', 'over_voltage',
+                'over_current', 'unregulated'}
+MeasurementType = {'current', 'voltage'}
 
 
 def get_range(range_list, offset, val):
@@ -46,7 +47,7 @@ def get_range(range_list, offset, val):
     return k
 
 
-class Base(ivi.IviContainer):
+class Base():
     "Base IVI methods for all DC power supplies"
     
     def __init__(self, *args, **kwargs):
@@ -461,42 +462,7 @@ class Trigger(ivi.IviContainer):
                         After a trigger occurs, the value of the Current Limit attribute reflects
                         the new value to which the current limit has been set.
                         """, cls, grp, '5.2.2'))
-        self._add_property('outputs[].triggered_voltage_level',
-                        self._get_output_triggered_voltage_level,
-                        self._set_output_triggered_voltage_level,
-                        None,
-                        ivi.Doc("""
-                        Specifies the value to which the power supply sets the voltage level
-                        after a trigger event occurs. The units are Volts.
-                        
-                        After an Initiate call, the power supply waits for a trigger event from
-                        the source specified with the Trigger Source attribute. After a trigger
-                        event occurs, the power supply sets the voltage level to the value of this
-                        attribute.
-                        
-                        After a trigger occurs, the value of the Voltage Level attribute reflects
-                        the new value to which the voltage level has been set.
-                        """, cls, grp, '5.2.3'))
-        self._add_method('trigger.abort',
-                        self._trigger_abort,
-                        ivi.Doc("""
-                        If the power supply is currently waiting for a trigger to change the
-                        output signal, this function returns the power supply to the ignore
-                        triggers state.
-                        
-                        If the power supply is not waiting for a trigger, this function does
-                        nothing and returns Success.
-                        """, cls, grp, '5.3.1'))
-        self._add_method('trigger.initiate',
-                        self._trigger_initiate,
-                        ivi.Doc("""
-                        If the power supply is not currently waiting for a trigger, this function
-                        causes the power supply to wait for a trigger.
-                        
-                        If the power supply is already waiting for a trigger, this function does
-                        nothing and returns Success.
-                        """, cls, grp, '5.3.5'))
-    
+
     def _init_outputs(self):
         try:
             super(Trigger, self)._init_outputs()
@@ -531,95 +497,121 @@ class Trigger(ivi.IviContainer):
             raise ivi.OutOfRangeException()
         self._output_triggered_current_limit[index] = value
     
-    def _get_output_triggered_voltage_level(self, index):
-        index = ivi.get_index(self._output_name, index)
-        return self._output_triggered_voltage_level[index]
+    def get_triggered_voltage_level(self, output):
+        output = ivi.get_index(self._output_name, output)
+        return self._output_triggered_voltage_level[output]
     
-    def _set_output_triggered_voltage_level(self, index, value):
-        index = ivi.get_index(self._output_name, index)
+    def set_triggered_voltage_level(self, output, value):
+        """
+        Specifies the value to which the power supply sets the voltage level
+        after a trigger event occurs. The units are Volts.
+
+        After an Initiate call, the power supply waits for a trigger event from
+        the source specified with the Trigger Source attribute. After a trigger
+        event occurs, the power supply sets the voltage level to the value of this
+        attribute.
+
+        After a trigger occurs, the value of the Voltage Level attribute reflects
+        the new value to which the voltage level has been set.
+        """
+        output = ivi.get_index(self._output_name, output)
         value = float(value)
-        if self._output_spec[index]['voltage_max'] >= 0:
-            if value < 0 or value > self._output_spec[index]['voltage_max']:
+        if self._output_spec[output]['voltage_max'] >= 0:
+            if value < 0 or value > self._output_spec[output]['voltage_max']:
                 raise ivi.OutOfRangeException()
         else:
-            if value > 0 or value < self._output_spec[index]['voltage_max']:
+            if value > 0 or value < self._output_spec[output]['voltage_max']:
                 raise ivi.OutOfRangeException()
-        self._output_triggered_voltage_level[index] = value
-    
-    def _trigger_abort(self):
+        self._output_triggered_voltage_level[output] = value
+
+    @abc.abstractmethod
+    def trigger_abort(self):
+        """
+        If the power supply is currently waiting for a trigger to change the
+        output signal, this function returns the power supply to the ignore
+        triggers state.
+
+        If the power supply is not waiting for a trigger, this function does
+        nothing and returns Success.
+        """
+        pass
+
+    @abc.abstractmethod
+    def trigger_initiate(self):
+        """
+        If the power supply is not currently waiting for a trigger, this function
+        causes the power supply to wait for a trigger.
+
+        If the power supply is already waiting for a trigger, this function does
+        nothing and returns Success.
+        """
         pass
     
-    def _trigger_initiate(self):
-        pass
     
-    
-class SoftwareTrigger(ivi.IviContainer):
+class SoftwareTrigger(abc.ABC):
     "Extension IVI methods for power supplies supporting software triggering"
     
     def __init__(self, *args, **kwargs):
-        super(SoftwareTrigger, self).__init__(*args, **kwargs)
+        super(self).__init__()
         
         cls = 'IviDCPwr'
         grp = 'SoftwareTrigger'
         ivi.add_group_capability(self, cls+grp)
-        
-        self._add_method('send_software_trigger',
-                        self._send_software_trigger,
-                        ivi.Doc("""
-                        This function sends a software-generated trigger to the instrument. It is
-                        only applicable for instruments using interfaces or protocols which
-                        support an explicit trigger function. For example, with GPIB this function
-                        could send a group execute trigger to the instrument. Other
-                        implementations might send a ``*TRG`` command.
-                        
-                        Since instruments interpret a software-generated trigger in a wide variety
-                        of ways, the precise response of the instrument to this trigger is not
-                        defined. Note that SCPI details a possible implementation.
-                        
-                        This function should not use resources which are potentially shared by
-                        other devices (for example, the VXI trigger lines). Use of such shared
-                        resources may have undesirable effects on other devices.
-                        
-                        This function should not check the instrument status. Typically, the
-                        end-user calls this function only in a sequence of calls to other
-                        low-level driver functions. The sequence performs one operation. The
-                        end-user uses the low-level functions to optimize one or more aspects of
-                        interaction with the instrument. To check the instrument status, call the
-                        appropriate error query function at the conclusion of the sequence.
-                        
-                        The trigger source attribute must accept Software Trigger as a valid
-                        setting for this function to work. If the trigger source is not set to
-                        Software Trigger, this function does nothing and returns the error Trigger
-                        Not Software.
-                        """, cls, grp, '6.2.1', 'send_software_trigger'))
-    
-    def _send_software_trigger(self):
+
+
+    @abc.abstractmethod
+    def software_trigger(self):
+        """
+        This function sends a software-generated trigger to the instrument. It is
+        only applicable for instruments using interfaces or protocols which
+        support an explicit trigger function. For example, with GPIB this function
+        could send a group execute trigger to the instrument. Other
+        implementations might send a ``*TRG`` command.
+
+        Since instruments interpret a software-generated trigger in a wide variety
+        of ways, the precise response of the instrument to this trigger is not
+        defined. Note that SCPI details a possible implementation.
+
+        This function should not use resources which are potentially shared by
+        other devices (for example, the VXI trigger lines). Use of such shared
+        resources may have undesirable effects on other devices.
+
+        This function should not check the instrument status. Typically, the
+        end-user calls this function only in a sequence of calls to other
+        low-level driver functions. The sequence performs one operation. The
+        end-user uses the low-level functions to optimize one or more aspects of
+        interaction with the instrument. To check the instrument status, call the
+        appropriate error query function at the conclusion of the sequence.
+
+        The trigger source attribute must accept Software Trigger as a valid
+        setting for this function to work. If the trigger source is not set to
+        Software Trigger, this function does nothing and returns the error Trigger
+        Not Software.
+        """
         pass
     
     
-class Measurement(ivi.IviContainer):
+class Measurement(abc.ABC):
     "Extension IVI methods for power supplies supporting measurement of the output signal"
     
     def __init__(self, *args, **kwargs):
-        super(Measurement, self).__init__(*args, **kwargs)
+        super(self).__init__()
         
         cls = 'IviDCPwr'
         grp = 'Measurement'
         ivi.add_group_capability(self, cls+grp)
-        
-        self._add_method('outputs[].measure',
-                        self._output_measure,
-                        ivi.Doc("""
-                        Takes a measurement on the output signal and returns the measured value.
-                        
-                        Values for measurement_type:
-                        
-                        * 'voltage'
-                        * 'current'
-                        """, cls, grp, '7.2.1'))
-    
-    def _output_measure(self, index, type):
-        index = ivi.get_index(self._output_name, index)
+
+    @abc.abstractmethod
+    def measure(self, output, type):
+        """
+        Takes a measurement on the output signal and returns the measured value.
+
+        Values for measurement_type:
+
+        * 'voltage'
+        * 'current'
+        """
+        output = ivi.get_index(self._output_name, output)
         if type not in MeasurementType:
             raise ivi.ValueNotSupportedException()
         return 0
